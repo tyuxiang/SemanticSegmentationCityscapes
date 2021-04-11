@@ -10,7 +10,7 @@ from datasets.labels import label2trainid
 
 LABEL_POSTFIX = '_gtFine_labelIds.png' # not sure if this is the one we are supposed to use
 
-def setupDatasetsAndLoaders(dir):
+def setupDatasetsAndLoaders(dir, batch_size=64):
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
     ''' init transforms here '''
@@ -18,9 +18,7 @@ def setupDatasetsAndLoaders(dir):
         transforms.ToTensor(),
         transforms.Normalize(*mean_std),
     ])
-    train_transform = transforms.Compose([
-        transforms.ToTensor(),
-    ])
+
     val_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(*mean_std),
@@ -34,9 +32,9 @@ def setupDatasetsAndLoaders(dir):
 
     train_set, val_set, test_set = makeDatasets(dir, inputTransforms=inputTransforms)
 
-    train_loader = DataLoader(train_set)
-    val_loader = DataLoader(val_set)
-    test_loader = DataLoader(test_set)
+    train_loader = DataLoader(train_set, batch_size=batch_size)
+    val_loader = DataLoader(val_set, batch_size=batch_size)
+    test_loader = DataLoader(test_set, batch_size=batch_size)
 
     return train_set, val_set, test_set, train_loader, val_loader, test_loader
 
