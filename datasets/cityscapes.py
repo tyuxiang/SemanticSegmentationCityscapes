@@ -43,7 +43,8 @@ def makeDatasets(dataset_dir, inputTransforms, rnd_seed=42):
     # trainvaltest split
     n = len(items)
     ratios = [int(0.7*n), int(0.15*n), n - int(0.7*n) - int(0.15*n)]
-    splitIdx = random_split(range(n), ratios, generator=torch.Generator().manual_seed(rnd_seed))
+    splitIdx = random_split(range(n), ratios)
+    # splitIdx = random_split(range(n), ratios, generator=torch.Generator().manual_seed(rnd_seed))
 
     modes = ['train', 'val', 'test']
     dss = []
