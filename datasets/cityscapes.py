@@ -8,7 +8,7 @@ import numpy as np
 
 from datasets.labels import label2trainid
 
-LABEL_POSTFIX = '_gtFine_labelIds.png' # not sure if this is the one we are supposed to use
+LABEL_POSTFIX = '_gtFine_color.png' # not sure if this is the one we are supposed to use
 
 def setupDatasetsAndLoaders(dir, batch_size=64):
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
@@ -43,8 +43,8 @@ def makeDatasets(dataset_dir, inputTransforms, rnd_seed=42):
     # trainvaltest split
     n = len(items)
     ratios = [int(0.7*n), int(0.15*n), n - int(0.7*n) - int(0.15*n)]
-    splitIdx = random_split(range(n), ratios, generator=torch.Generator().manual_seed(rnd_seed))
-
+    splitIdx = random_split(range(n), ratios)
+    #, generator =torch.Generator().manual_seed(rnd_seed)
     modes = ['train', 'val', 'test']
     dss = []
     for modeIdx, mode in enumerate(modes):
