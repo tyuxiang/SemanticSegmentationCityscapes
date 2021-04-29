@@ -61,8 +61,8 @@ def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", us
             annotatedOutput = annotatedOutput.to(device).long()
             loss = loss_fn(output, annotatedOutput)
             running_train_loss+=loss.item()*output.shape[0]
-#             iou_mean = iou_pytorch(output, annotatedOutput)
-#             running_train_iou+=iou_mean.item()*output.shape[0]
+            iou_mean = iou_pytorch(output, annotatedOutput)
+            running_train_iou+=iou_mean.item()*output.shape[0]
 
             # Backprop
             optimizer.zero_grad()
@@ -96,7 +96,7 @@ def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", us
         print('epoch {}/{}, loss {:.4f}, val_loss {:.4f}, train IoU {:.4f}, val IoU {:.4f}'.format(
             epoch + 1, num_epochs, 
             running_train_loss/len(train_loader.dataset), 
-            running_val_loss/len(val_loader.dataset))) 
+            running_val_loss/len(val_loader.dataset),
             running_train_iou/len(train_loader.dataset), 
             running_val_iou/len(val_loader.dataset)))
 
