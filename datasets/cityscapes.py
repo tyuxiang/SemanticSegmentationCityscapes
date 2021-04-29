@@ -15,16 +15,19 @@ def setupDatasetsAndLoaders(dir, batch_size=64):
 
     ''' init transforms here '''
     train_transform = transforms.Compose([
+        transforms.Resize((224,448)),
         transforms.ToTensor(),
         transforms.Normalize(*mean_std),
     ])
 
     val_transform = transforms.Compose([
+        transforms.Resize((224,448)),
         transforms.ToTensor(),
         transforms.Normalize(*mean_std),
     ])
 
     test_transform = transforms.Compose([
+        transforms.Resize((224,448)),
         transforms.ToTensor(),
         transforms.Normalize(*mean_std),
     ])
@@ -119,6 +122,8 @@ class CityScapes(Dataset):
             images.append(image)
 
         output = Image.open(out_path)
+        t = transforms.Resize((224,448))
+        output = t(output)
         output = np.array(output)
 
         temp = output.copy()
