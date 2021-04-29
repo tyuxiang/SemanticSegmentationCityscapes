@@ -61,8 +61,8 @@ def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", us
             annotatedOutput = annotatedOutput.to(device).long()
             loss = loss_fn(output, annotatedOutput)
             running_train_loss+=loss.item()*output.shape[0]
-            iou_mean = iou_pytorch(output, annotatedOutput)
-            running_train_iou+=iou_mean.item()*output.shape[0]
+#             iou_mean = iou_pytorch(output, annotatedOutput)
+#             running_train_iou+=iou_mean.item()*output.shape[0]
 
             # Backprop
             optimizer.zero_grad()
@@ -88,27 +88,28 @@ def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", us
             # Calculate loss and IOU
             annotatedOutput = annotatedOutput.to(device).long()
             val_loss = loss_fn(output, annotatedOutput)
-            val_iou_mean = iou_pytorch(output, annotatedOutput)
+#             val_iou_mean = iou_pytorch(output, annotatedOutput)
             running_val_loss+=val_loss.item()*output.shape[0]
-            running_val_iou+=val_iou_mean.item()*output.shape[0]
+#             running_val_iou+=val_iou_mean.item()*output.shape[0]
             
         # Display
         print('epoch {}/{}, loss {:.4f}, val_loss {:.4f}, train IoU {:.4f}, val IoU {:.4f}'.format(
             epoch + 1, num_epochs, 
             running_train_loss/len(train_loader.dataset), 
-            running_val_loss/len(val_loader.dataset), 
-            running_train_iou/len(train_loader.dataset), 
-            running_val_iou/len(val_loader.dataset)))
+            running_val_loss/len(val_loader.dataset))) 
+#             running_train_iou/len(train_loader.dataset), 
+#             running_val_iou/len(val_loader.dataset)))
 
         loss_list.append(running_train_loss/len(train_loader.dataset))
         val_loss_list.append(running_val_loss/len(val_loader.dataset))
-        train_iou.append(running_train_iou/len(train_loader.dataset))
-        val_iou.append(running_val_iou/len(val_loader.dataset))
+#         train_iou.append(running_train_iou/len(train_loader.dataset))
+#         val_iou.append(running_val_iou/len(val_loader.dataset))
 
         # Save model here
         save_checkpoint(model, loss_list,val_loss_list,train_iou,val_iou,batch_size,epoch,lr,optimizer_name,use_psp)
         
-    return model, val_iou
+#     return model, val_iou
+    return model, 0
 
         
 def hyperparams_train(optimizer="adam",use_psp=True):
@@ -129,4 +130,5 @@ def hyperparams_train(optimizer="adam",use_psp=True):
             print("Best model so far:", best_model)
     print("Finished training and best model is",best_model)
         
-hyperparams_train(optimizer = "adam",use_psp= True)
+# hyperparams_train(optimizer = "adam",use_psp= True)
+train(use_psp=True)

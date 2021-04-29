@@ -17,19 +17,30 @@ def convertColour(inp, label):
         final.append(out)
     return np.asarray(final)
 
-def iou_pytorch(outputs: torch.Tensor, labels: torch.Tensor, smooth = 1e-6):   
-    iou_class={}
-    for i in range(19):
-        output_class_h = outputs[0][i] 
-        output_class = torch.unsqueeze(output_class_h,0)
-        output_class= output_class.type(labels.dtype)
+# IOU function
+def iou_pytorch(outputs: torch.Tensor, labels: torch.Tensor): 
+    SMOOTH = 1e-6
+    
+    # output shape: (1,20,1028,2056), label shape: (20,1028,2056)
+    iou_class={} 
+    num_class = list(outputs.size())[1]
+    for i in range(20): 
+        # get the most likely class out of the probabilities calculated for each class
+        output_class_most_likely, indices =torch.max(outputs,dim=1)
+        mask_size = list(labels.size())[1:]
+        boolean_mask = torch.ones(mask_size, dtype=torch.float64, device = device).bool()
+        # create a mask for each class
+        mask = torch.ones(mask_size, dtype=torch.float64, device = device)*i
 
-        intersection = (output_class & labels).float().sum((1, 2))
-        union = (output_class | labels).float().sum((1, 2))  
+        select_label_class = torch.eq(mask, labels).to(device)
+        select_predicted_class = torch.eq(mask, indices).to(device)
+        intersection = (select_label_class & select_predicted_class)
+        # union is number of predicted samples and number of labelled samples for each class - intersection
+        union_sum = select_predicted_class.sum()+select_label_class.sum() - intersection.sum()  
         
-        iou = (intersection + smooth) / (union + smooth) 
+        iou = (intersection.sum() + SMOOTH) / (union_sum + SMOOTH) 
         iou_class[i]=iou
-    return sum(list(iou_class.values()))/19 
+    return sum(list(iou_class.values()))/num_class
 
 def save_checkpoint(model, loss_list,val_loss_list,train_iou,val_iou,batch_size,epoch,lr,optimizer_name, use_psp):
     
