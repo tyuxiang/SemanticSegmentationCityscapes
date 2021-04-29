@@ -8,7 +8,7 @@ import numpy as np
 
 from datasets.labels import label2trainid
 
-LABEL_POSTFIX = '_gtFine_color.png' # not sure if this is the one we are supposed to use
+LABEL_POSTFIX = '_gtFine_labelIds.png' # not sure if this is the one we are supposed to use
 
 def setupDatasetsAndLoaders(dir, batch_size=64):
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
