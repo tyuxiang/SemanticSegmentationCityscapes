@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from torchvision.utils import save_image
 import matplotlib.pyplot as plt
+import torch.nn as nn
+import os
 
 def convertColour(inp, label):
     np_inp = inp.numpy()
@@ -18,7 +20,7 @@ def convertColour(inp, label):
     return np.asarray(final)
 
 # IOU function
-def iou_pytorch(outputs: torch.Tensor, labels: torch.Tensor): 
+def iou_pytorch(outputs: torch.Tensor, labels: torch.Tensor, device): 
     SMOOTH = 1e-6
     
     # output shape: (1,20,1028,2056), label shape: (20,1028,2056)
@@ -46,8 +48,12 @@ def save_checkpoint(model, loss_list,val_loss_list,train_iou,val_iou,batch_size,
     
     if use_psp:
         model.name = "batch_"+str(batch_size)+"_lr_"+str(lr)+"_e_"+str(epoch)+"_optimizer_"+optimizer_name+"_psp"
+        use_psp_str = "True"
+        dirName = "./Models/B"+str(batch_size)+"L"+str(lr)+str(optimizer_name)+"_psp"
     else:
         model.name = "batch_"+str(batch_size)+"_lr_"+str(lr)+"_e_"+str(epoch)+"_optimizer_"+optimizer_name
+        use_psp_str = "False"
+        dirName = "./Models/B"+str(batch_size)+"L"+str(lr)+str(optimizer_name)
         
     model.batch_size = batch_size
     model.epoch = epoch
@@ -63,7 +69,7 @@ def save_checkpoint(model, loss_list,val_loss_list,train_iou,val_iou,batch_size,
               'epoch': model.epoch,
               'lr': model.lr,
               'optimizer_name':model.optimizer_name,
-              'use_psp': use_psp,
+              'use_psp': use_psp_str,
               'loss_list': model.loss_list,
               'val_loss_list': model.val_loss_list,
               'train_iou': model.train_iou,
@@ -72,14 +78,25 @@ def save_checkpoint(model, loss_list,val_loss_list,train_iou,val_iou,batch_size,
               'state_dict': model.state_dict(),    
               }
     
+    if not os.path.exists(dirName):
+        os.mkdir(dirName)
     
-    torch.save(checkpoint, "./Models/"+model.name+".pt")
+    torch.save(checkpoint, dirName+"/"+model.name+".pt")
+
+def load_model(path,device):
     
-def load_model(path):
+    from models import BigDLModel
+    
     cp = torch.load(path)
-    if cp.use_psp:
-        model = BigDLModel(use_psp)
+    
+#     if cp['use_psp']=="True":
+#         model.name = "batch_"+str(batch_size)+"_lr_"+str(lr)+"_e_"+str(epoch)+"_optimizer_"+optimizer_name+"_psp"
+#     else:
+#         model.name = "batch_"+str(batch_size)+"_lr_"+str(lr)+"_e_"+str(epoch)+"_optimizer_"+optimizer_name
         
+    model = BigDLModel(use_psp=True).to(device)
+    
+    model.name = cp['model_name']
     model.batch_size = cp['batch_size']
     model.epoch = cp['epoch']
     model.lr = cp['lr']
@@ -90,6 +107,8 @@ def load_model(path):
     model.val_iou = cp['val_iou']
     model.load_state_dict(cp['state_dict'])
     model.optimizer_name = cp['optimizer_name']
+   
+    
 
     return model
 
