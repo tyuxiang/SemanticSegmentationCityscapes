@@ -1,6 +1,13 @@
 # SemanticSegmentationCityscapes
 Deep Learning Large Project
 
+## Quick Start
+```
+streamlit run dashboard.py
+```
+
+Do make sure that streamlit is downloaded (`pip install streamlit` should typically be sufficient).
+
 ## Dataset
 Note that the dataset file structure should be as follows with only the city ulm as the only example. 
 ```
