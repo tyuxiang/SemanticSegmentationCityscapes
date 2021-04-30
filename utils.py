@@ -4,6 +4,7 @@ from torchvision.utils import save_image
 import matplotlib.pyplot as plt
 import torch.nn as nn
 import os
+import datasets.labels as l
 
 def convertColour(inp, label):
     np_inp = inp.numpy()
