@@ -74,29 +74,29 @@ def findAllItems(dir):
     out_dir = 'gtFine'
     seq_dir = 'leftImg8bit_sequence'
 
-    modes = ['train', 'test', 'val']
+    # modes = ['train', 'test', 'val']
     items = []
-    for mode in modes:
-        path = os.path.join(dir, in_dir, mode)
-        cities = [mode + '/' + c for c in os.listdir(path)]
+    # for mode in modes:
+    #     path = os.path.join(dir, in_dir, mode)
+    cities = [c for c in os.listdir(os.path.join(dir, in_dir))]
+    # just to make sure the items indices are deterministic
+    cities.sort()
+
+    for city in cities:
+
+        img_paths = os.listdir(os.path.join(dir, in_dir, city))
         # just to make sure the items indices are deterministic
-        cities.sort()
+        img_paths.sort()
 
-        for city in cities:
+        for img_path in img_paths:
+            in_path = os.path.join(dir, in_dir, city, img_path)
 
-            img_paths = os.listdir(os.path.join(dir, in_dir, city))
-            # just to make sure the items indices are deterministic
-            img_paths.sort()
+            img_name = img_path.split('_leftImg8bit.png')[0]
+            out_path = os.path.join(dir, out_dir, city, img_name+LABEL_POSTFIX)
 
-            for img_path in img_paths:
-                in_path = os.path.join(dir, in_dir, city, img_path)
+            seq_paths = makeSequencePaths(dir, img_name, seq_dir, city)
 
-                img_name = img_path.split('_leftImg8bit.png')[0]
-                out_path = os.path.join(dir, out_dir, city, img_name+LABEL_POSTFIX)
-
-                seq_paths = makeSequencePaths(dir, img_name, seq_dir, city)
-
-                items.append((seq_paths, out_path, in_path))
+            items.append((seq_paths, out_path, in_path))
     return items
 
 class CityScapes(Dataset):

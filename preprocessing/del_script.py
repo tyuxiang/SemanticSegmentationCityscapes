@@ -1,13 +1,11 @@
 import os
 
-img_dir = './data/leftImg8bit'
-seq_dir = './data/leftImg8bit_sequence'
-mode = 'train'
+img_dir = '../data/leftImg8bit'
+seq_dir = '../data/leftImg8bit_sequence'
 
-mode_path = os.path.join(img_dir, mode)
-cities = [c for c in os.listdir(mode_path)]
+cities = [c for c in os.listdir(img_dir)]
 for city in cities:
-    ref_dir = os.path.join(mode_path, city)
+    ref_dir = os.path.join(img_dir, city)
     img_paths = os.listdir(ref_dir)
     img_paths.sort()
 
@@ -16,7 +14,7 @@ for city in cities:
         seq = int(img_name[1])
         ref_frame = int(img_name[2])
 
-        to_be_deleted_dir = os.path.join(seq_dir, mode, city)
+        to_be_deleted_dir = os.path.join(seq_dir, city)
 
         for frame in range(0, ref_frame-3):
             try:

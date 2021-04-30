@@ -129,6 +129,7 @@ def hyperparams_train(optimizer="adam",use_psp=True):
             print("Best model so far:", best_model)
     print("Finished training and best model is",best_model)
     
+train(num_epochs=2)
 # def best_params():
     
 #     device = "cpu"
