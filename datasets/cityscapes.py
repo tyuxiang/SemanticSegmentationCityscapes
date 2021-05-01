@@ -7,6 +7,7 @@ from PIL import Image
 import numpy as np
 
 from datasets.labels import label2trainid
+from preprocessing.augment_script import get_augmented_filename
 
 LABEL_POSTFIX = '_gtFine_labelIds.png' # not sure if this is the one we are supposed to use
 
@@ -90,6 +91,10 @@ def findAllItems(dir):
         img_paths.sort()
 
         for img_path in img_paths:
+            seq = int(img_path.split('_')[1])
+            if seq >= 900000:
+                continue
+            
             in_path = os.path.join(dir, in_dir, city, img_path)
 
             img_name = img_path.split('_leftImg8bit.png')[0]
@@ -100,11 +105,32 @@ def findAllItems(dir):
             items.append((seq_paths, out_path, in_path))
     return items
 
+def addAugmentedItems(items: list):
+    res = items.copy()
+
+    for idx, item in enumerate(items):
+        in_path = item[-1]
+        aug_path = get_augmented_filename(in_path)
+        
+        seq_paths = item[0]
+        aug_seq = []
+        for s in seq_paths:
+            aug_seq.append(get_augmented_filename(s))
+
+        resItem = (aug_seq, item[1], aug_path)
+        res.append(resItem)
+
+    return res
+
 class CityScapes(Dataset):
-    def __init__(self, mode, items, transform):
-        self.items = items
+    def __init__(self, mode, items, transform, use_augmented=False):
         self.mode = mode
         self.transform = transform
+
+        if self.mode == 'train' and use_augmented:
+            self.items = addAugmentedItems(items)
+        else:
+            self.items = items
 
     def __len__(self):
         return len(self.items)
