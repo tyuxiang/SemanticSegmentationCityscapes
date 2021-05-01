@@ -2,6 +2,7 @@ import os
 from PIL import Image
 import numpy as np
 import streamlit as st
+import pandas as pd
 
 import torchvision.transforms as transforms
 import torch
@@ -32,6 +33,29 @@ def predict_image(model, path, gnd_truth_image):
 
     return img, iou_score
 
+@st.cache()
+def get_graph_data(model_path):
+    cp = torch.load(model_path)
+    train_loss = cp['loss_list']
+    val_loss = cp['val_loss_list']
+    train_iou = cp['train_iou']
+    val_iou = cp['val_iou']
+
+    n = len(train_loss)
+    ran = range(1, n+1)
+
+    return ran, train_loss, val_loss, train_iou, val_iou
+
+@st.cache()
+def get_model_list(model_dir):
+    archs = os.listdir(model_dir)
+    all_models = []
+    for arch in archs:
+        eps = [os.path.join(arch, p) for p in os.listdir(os.path.join(model_dir, arch))]
+        all_models += eps
+
+    return all_models
+
 display_dir = './data_display'
 all_display_samples = [img.split('_leftImg8bit')[0] for img in os.listdir(os.path.join(display_dir, 'leftImg8bit'))]
 
@@ -52,10 +76,7 @@ with select_left:
     "Pick a trained model that we should predict the image with!"
 
     option_empty = st.empty()
-    model_selected = option_empty.radio("Select model that you want", (
-                                            "Models/B1L0.001adam_psp/batch_1_lr_0.001_e_1_optimizer_adam_psp.pt", 
-                                            "Models/B4L0.001adam_psp/batch_4_lr_0.001_e_9_optimizer_adam_psp.pt", 
-                                        ))
+    model_selected = option_empty.selectbox("Select model that you want", get_model_list('./Models'))
 
     # uploaded_file = st.file_uploader("Or choose an image", type="jpg")
 
@@ -94,9 +115,26 @@ with display_r2[1]:
 
     with st.spinner("prediction happening... please wait"):
         try:
-            output, iou_score = predict_image(model_selected, image_paths[-1], annotation_image)
+            model_path = os.path.join('./Models', model_selected)
+            output, iou_score = predict_image(model_path, image_paths[-1], annotation_image)
             prediction_image.image(output, caption="annotated image from model", use_column_width=True)
             iou_box.success(f'IOU Score is {iou_score}')
 
         except:
             prediction_image.error("there has been an error :(")
+
+st.header('Graphs from Training')
+graph_data = get_graph_data(model_path)
+
+display_r3 = st.beta_columns(2)
+with display_r3[0]:
+    st.subheader('Loss Graph (across epochs)')
+    d = pd.DataFrame([graph_data[1], graph_data[2]]).T
+    d.columns = ['train_loss', 'val_loss']
+    st.line_chart(d)
+
+with display_r3[1]:
+    st.subheader('IOU Graph (across epochs)')
+    d = pd.DataFrame([graph_data[3], graph_data[4]]).T
+    d.columns = ['train_iou', 'val_iou']
+    st.line_chart(d)

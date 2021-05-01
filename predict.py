@@ -17,7 +17,7 @@ def evaluate(dir, model_path, batch_size=1, gpu=True):
     device = "cuda" if (torch.cuda.is_available() and gpu) else "cpu"
 
     model = load_model(model_path, device)
-    val_loader = setupDatasetsAndLoaders(dir, batch_size)[-2]
+    test_loader = setupDatasetsAndLoaders(dir, batch_size)[-1]
     loss_fn = nn.CrossEntropyLoss(ignore_index=255)
 
     # Reset loss
@@ -25,7 +25,7 @@ def evaluate(dir, model_path, batch_size=1, gpu=True):
     running_val_iou = 0
 
     # Run predictions on validation set
-    for data_val in tqdm(val_loader):
+    for data_val in tqdm(test_loader):
         # Get data
         imgSeq, annotatedOutput, imgName = data_val
 
@@ -43,8 +43,8 @@ def evaluate(dir, model_path, batch_size=1, gpu=True):
         running_val_loss+=val_loss.item()*output.shape[0]
         running_val_iou+=val_iou_mean.item()*output.shape[0]
         
-    val_loss = running_val_loss/len(val_loader.dataset)
-    val_iou = running_val_iou/len(val_loader.dataset)
+    val_loss = running_val_loss/len(test_loader.dataset)
+    val_iou = running_val_iou/len(test_loader.dataset)
     print(f'Evaluating {model.name} at epoch {model.epoch}')
     print(f'val_loss: {val_loss}\nval_iou: {val_iou}')
 
