@@ -53,10 +53,8 @@ with select_left:
 
     option_empty = st.empty()
     model_selected = option_empty.radio("Select model that you want", (
-                                            "Model 1", 
-                                            "Model 2?", 
                                             "Models/B1L0.001adam_psp/batch_1_lr_0.001_e_1_optimizer_adam_psp.pt", 
-                                            "Model 4? idk", 
+                                            "Models/B4L0.001adam_psp/batch_4_lr_0.001_e_9_optimizer_adam_psp.pt", 
                                         ))
 
     # uploaded_file = st.file_uploader("Or choose an image", type="jpg")

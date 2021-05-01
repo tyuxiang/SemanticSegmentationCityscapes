@@ -4,7 +4,7 @@ from torch.autograd import Variable
 import torchvision.transforms as transforms
 from torchvision.utils import save_image
 
-import tqdm
+from tqdm import tqdm
 from PIL import Image
 import numpy as np
 import os
@@ -91,7 +91,7 @@ def predict(image_paths, model_path, gpu=True):
 
     val_loss = loss_fn(output, annotatedOutput)
     val_iou_mean = iou_pytorch(output, annotatedOutput,device)
-    print(f'Evaluating {model.name} at epoch {model.epoch}')
+    print(f'Predicting using {model.name} at epoch {model.epoch}')
     print(f'val_loss: {val_loss}\nval_iou: {val_iou_mean}')
     return output, val_iou_mean
 
@@ -112,3 +112,6 @@ def retrieve_sequence(img_path, data_dir='data_display'):
 
 # seq = retrieve_sequence('ulm_000015_000019_leftImg8bit.png')
 # predict(seq, 'Models/B1L0.001adam_psp/batch_1_lr_0.001_e_1_optimizer_adam_psp.pt', True)
+# model_path = 'Models/B4L0.001adam_psp/batch_4_lr_0.001_e_9_optimizer_adam_psp.pt'
+# model_path = 'Models/B1L0.001adam_psp/batch_1_lr_0.001_e_1_optimizer_adam_psp.pt'
+# evaluate('./data', model_path, 4, False)
