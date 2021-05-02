@@ -55,7 +55,7 @@ def get_model_list(model_dir):
         eps = [os.path.join(arch, p) for p in os.listdir(os.path.join(model_dir, arch))]
         all_models += eps
     all_models.sort()
-    
+
     return all_models
 
 display_dir = './data_display'
@@ -66,21 +66,14 @@ all_display_samples = [img.split('_leftImg8bit')[0] for img in os.listdir(os.pat
 
 ### Dashboard structure ###
 st.title('Semantic Segmentation for Roads')
-st.sidebar.title("About")
-st.sidebar.info("This is an application written by us")
-
-# models = load_all_models()
 
 select_left, select_right = st.beta_columns(2)
 with select_left:
-    # apparently streamlit can just allow you to write text like this
     st.header("Model Selection")
     "Pick a trained model that we should predict the image with!"
 
     option_empty = st.empty()
     model_selected = option_empty.selectbox("Select model that you want", get_model_list('./Models'))
-
-    # uploaded_file = st.file_uploader("Or choose an image", type="jpg")
 
 with select_right:
     st.header("Image Selection")
@@ -90,13 +83,6 @@ with select_right:
     image_paths = ['{}_{}_{:06d}_leftImg8bit.png'.format(image_name[0], image_name[1], frame) for frame in range(ref_frame-3, ref_frame+1)]
 
 
-# st.header('Image Sequence')
-# display_r1 = st.beta_columns(4)
-# for idx, display in enumerate(display_r1):
-#     with display:
-#         # image_box = st.empty()
-#         image = load_image(os.path.join(display_dir, 'leftImg8bit_sequence', image_paths[idx]))
-#         st.image(image, caption=f"{image_paths[idx]}", use_column_width=True)
 st.sidebar.subheader('Image Sequence')
 for idx in range(4):
     image = load_image(os.path.join(display_dir, 'leftImg8bit_sequence', image_paths[idx]))
@@ -144,19 +130,3 @@ with display_r3[1]:
     d = pd.DataFrame([graph_data[3], graph_data[4]]).T
     d.columns = ['train_iou', 'val_iou']
     st.line_chart(d)
-
-# r4 = st.beta_columns(2)
-# i = './data/leftImg8bit/ulm/ulm_000000_000019_leftImg8bit.png'
-# with r4[0]:
-#     st.subheader('original')
-#     st.image(load_image(i))
-
-# with r4[1]:
-#     st.subheader('changed')
-#     st.image(augment_image(i, 0), caption='saturation=0')
-#     st.image(augment_image(i, 0.25), caption='saturation=0.25')
-#     st.image(augment_image(i, 0.5), caption='saturation=0.5')
-#     st.image(augment_image(i, 0.75), caption='saturation=0.75')
-#     st.image(augment_image(i, 1), caption='saturation=1 (original)')
-#     st.image(augment_image(i, 1.25), caption='saturation=1.25')
-#     st.image(augment_image(i, 1.5), caption='saturation=1.5')

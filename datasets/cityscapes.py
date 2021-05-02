@@ -9,9 +9,9 @@ import numpy as np
 from datasets.labels import label2trainid
 from preprocessing.augment_script import get_augmented_filename
 
-LABEL_POSTFIX = '_gtFine_labelIds.png' # not sure if this is the one we are supposed to use
+LABEL_POSTFIX = '_gtFine_labelIds.png'
 
-def setupDatasetsAndLoaders(dir, batch_size=64):
+def setupDatasetsAndLoaders(dir, batch_size=64, use_augmented=False):
     mean_std = ([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 
     ''' init transforms here '''
@@ -34,7 +34,7 @@ def setupDatasetsAndLoaders(dir, batch_size=64):
     ])
     inputTransforms = [train_transform, val_transform, test_transform]
 
-    train_set, val_set, test_set = makeDatasets(dir, inputTransforms=inputTransforms)
+    train_set, val_set, test_set = makeDatasets(dir, inputTransforms=inputTransforms, use_augmented=use_augmented)
 
     train_loader = DataLoader(train_set, batch_size=batch_size)
     val_loader = DataLoader(val_set, batch_size=batch_size)
@@ -42,19 +42,19 @@ def setupDatasetsAndLoaders(dir, batch_size=64):
 
     return train_set, val_set, test_set, train_loader, val_loader, test_loader
 
-def makeDatasets(dataset_dir, inputTransforms, rnd_seed=42):
+def makeDatasets(dataset_dir, inputTransforms, rnd_seed=42, use_augmented=False):
     items = findAllItems(dataset_dir)
     # trainvaltest split
     n = len(items)
     ratios = [int(0.7*n), int(0.15*n), n - int(0.7*n) - int(0.15*n)]
     torch.manual_seed(rnd_seed)
     splitIdx = random_split(range(n), ratios)
-#     splitIdx = random_split(range(n), ratios, generator=torch.Generator().manual_seed(rnd_seed))
+
     modes = ['train', 'val', 'test']
     dss = []
     for modeIdx, mode in enumerate(modes):
         modeItems = [items[index] for index in splitIdx[modeIdx]]
-        ds = CityScapes(mode, modeItems, inputTransforms[modeIdx])
+        ds = CityScapes(mode, modeItems, inputTransforms[modeIdx], use_augmented=use_augmented)
         dss.append(ds)
 
     train_set, val_set, test_set = dss
@@ -76,10 +76,7 @@ def findAllItems(dir):
     out_dir = 'gtFine'
     seq_dir = 'leftImg8bit_sequence'
 
-    # modes = ['train', 'test', 'val']
     items = []
-    # for mode in modes:
-    #     path = os.path.join(dir, in_dir, mode)
     cities = [c for c in os.listdir(os.path.join(dir, in_dir))]
     # just to make sure the items indices are deterministic
     cities.sort()

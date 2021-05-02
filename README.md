@@ -9,23 +9,23 @@ streamlit run dashboard.py
 Do make sure that streamlit is downloaded (`pip install streamlit` should typically be sufficient).
 
 ## Dataset
-Note that the dataset file structure should be as follows with only the city ulm as the only example. 
+Note that the dataset file structure should be as follows (for illustration purposes, we only included three cities). 
 ```
 ./data
 ├── gtFine
-│   ├── test
-│   ├── train
-│   │   └── ulm
-│   └── val
+│   ├── lindau
+│   ├── munster
+│   └── ulm
 ├── leftImg8bit
-│   ├── test
-│   ├── train
-│   │   └── ulm
-│   └── val
+│   ├── lindau
+│   ├── munster
+│   └── ulm
 └── leftImg8bit_sequence
-    ├── test
-    ├── train
-    │   └── ulm
-    └── val
+    ├── lindau
+    ├── munster
+    └── ulm
+
 ```
 This is important for preversing the training and evaluation process of the model. 
+
+Augmented images have also been included in the respective directories and they are denoted by the sequence number (the first number in the filename) being higher than 900,000. 
