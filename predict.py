@@ -48,7 +48,6 @@ def evaluate(dir, model_path, batch_size=1, gpu=True):
     print(f'Evaluating {model.name} at epoch {model.epoch}')
     print(f'val_loss: {val_loss}\nval_iou: {val_iou}')
 
-# evaluate('./data', './Models/B1L0.001adam/batch_1_lr_0.001_e_1_optimizer_adam.pt',1,True)
 def predict(image_paths, model_path, gpu=True):
     device = "cuda" if (torch.cuda.is_available() and gpu) else "cpu"
     out_path = image_paths[-1]
@@ -109,9 +108,3 @@ def retrieve_sequence(img_path, data_dir='data_display'):
     paths.append(os.path.join(data_dir, 'gtFine', annotated_path))
     
     return paths
-
-# seq = retrieve_sequence('ulm_000015_000019_leftImg8bit.png')
-# predict(seq, 'Models/B1L0.001adam_psp/batch_1_lr_0.001_e_1_optimizer_adam_psp.pt', True)
-# model_path = 'Models/B4L0.001adam_psp/batch_4_lr_0.001_e_9_optimizer_adam_psp.pt'
-# model_path = 'Models/B1L0.001adam_psp/batch_1_lr_0.001_e_1_optimizer_adam_psp.pt'
-# evaluate('./data', model_path, 4, False)

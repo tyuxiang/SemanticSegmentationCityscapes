@@ -90,12 +90,7 @@ def load_model(path,device):
     
     cp = torch.load(path)
     
-#     if cp['use_psp']=="True":
-#         model.name = "batch_"+str(batch_size)+"_lr_"+str(lr)+"_e_"+str(epoch)+"_optimizer_"+optimizer_name+"_psp"
-#     else:
-#         model.name = "batch_"+str(batch_size)+"_lr_"+str(lr)+"_e_"+str(epoch)+"_optimizer_"+optimizer_name
-        
-    model = BigDLModel(use_psp=True).to(device)
+    model = BigDLModel(use_psp=cp['use_psp']).to(device)
     
     model.name = cp['model_name']
     model.batch_size = cp['batch_size']

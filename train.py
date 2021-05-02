@@ -8,15 +8,13 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torch
 
-def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", use_psp= False, use_augmented=False):
+def train(batch_size=1, num_epochs=20, lr=0.001, optimizer_name="adam", use_psp=False, use_augmented=False, gpu=False):
     
     # Get data
     train_set, val_set, test_set, train_loader, val_loader, test_loader = setupDatasetsAndLoaders('./data', batch_size=batch_size, use_augmented=use_augmented)
     
     # Set device
-    CUDA = True
-#     device = "cuda" if (torch.cuda.is_available() and CUDA) else "cpu"
-    device = "cpu"
+    device = "cuda" if (torch.cuda.is_available() and gpu) else "cpu"
     print("Using device:",device)
     print("Torch version:",torch.__version__)
     
