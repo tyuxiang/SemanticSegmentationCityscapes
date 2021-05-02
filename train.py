@@ -8,10 +8,10 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torch
 
-def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", use_psp= False):
+def train(batch_size =1, num_epochs= 20, lr = 0.001, optimizer_name = "adam", use_psp= False, use_augmented=False):
     
     # Get data
-    train_set, val_set, test_set, train_loader, val_loader, test_loader = setupDatasetsAndLoaders('./data', batch_size=batch_size)
+    train_set, val_set, test_set, train_loader, val_loader, test_loader = setupDatasetsAndLoaders('./data', batch_size=batch_size, use_augmented=use_augmented)
     
     # Set device
     CUDA = True
@@ -129,4 +129,4 @@ def hyperparams_train(optimizer="adam",use_psp=True):
             print("Best model so far:", best_model)
     print("Finished training and best model is",best_model)
 
-# train(num_epochs=100, use_psp=True, batch_size=4, lr=0.001)
+# train(num_epochs=100, use_psp=True, batch_size=8, lr=0.01, use_augmented=True)
