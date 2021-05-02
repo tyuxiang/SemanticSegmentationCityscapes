@@ -5,6 +5,7 @@ venv/
 **/__pycache__/
 data.zip
 Models/
+models/
 *.zip
 models_display/
 data_display/

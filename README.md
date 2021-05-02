@@ -1,19 +1,25 @@
 # SemanticSegmentationCityscapes
 Deep Learning Large Project
 
+## Download Datasets and Trained Model
+[Download link for Data Samples and Models required for GUI (1.3GB)](https://drive.google.com/file/d/1cfVbdsz-IxBhN1Zz4BwB33G_RAfaQNKZ/view?usp=sharing)
+[Download link for Smaller Dataset of 4 cities (809MB)](https://drive.google.com/file/d/1pZnj7WW5_3eKZNaIkTMuMAdZB78QAVUp/view?usp=sharing)
+[Download link for More Trained Models (1.9GB)](https://drive.google.com/file/d/1YBYVr4o1kp4eOryea22u_r69xNyNT_Z1/view?usp=sharing)
+
 ## Quick Start
+Ensure that minimially the data for the GUI has been downloaded and extracted into the root directory for the dashboard to work. 
 ```
+pip install -r requirements.txt
 streamlit run dashboard.py
 ```
-
-Do make sure that streamlit is downloaded (`pip install streamlit` should typically be sufficient). This will start the dashboard to interact with the data visualisation. 
 
 In the GUI, the user can use the model and image dropdown to select the model to use for visualisation and the image to input. On the left, it visualises the Image sequence that is input into the model. Under ‘Annotated Image’, there is a colourized comparison between the ground truth and the output of the model, along with the IOU score. 
 
 Scrolling down the page, we can see interactive charts from the training process of the loss and IOU across epochs. 
 
-To add more models or samples to be visualised in the GUI, the user needs to add the appropriate files in ./models_display and ./data_display respectively. 
+To add more models or samples to be visualised in the GUI, the user needs to add the appropriate files in `./models_display` and `./data_display` respectively. 
 
+`main.ipynb` also provides a host of different access methods that the user can use to interface with this repository. 
 
 ## Dataset
 Note that the dataset file structure should be as follows with only the city ulm as the only example. 
