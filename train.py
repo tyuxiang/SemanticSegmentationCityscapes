@@ -1,5 +1,5 @@
 from datasets.cityscapes import setupDatasetsAndLoaders
-from models import BigDLModel
+from models import BigDLModel, NoLSTMModel
 from utils import convertColour, save_checkpoint, load_model, iou_pytorch, get_optimizer
 from tqdm import tqdm
 import itertools
@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torch
 
-def train(batch_size=1, num_epochs=20, lr=0.001, optimizer_name="adam", use_psp=False, use_augmented=False, gpu=False):
+def train(use_lstm=True, batch_size=1, num_epochs=20, lr=0.001, optimizer_name="adam", use_psp=False, use_augmented=False, gpu=False):
     
     # Get data
     train_set, val_set, test_set, train_loader, val_loader, test_loader = setupDatasetsAndLoaders('./data', batch_size=batch_size, use_augmented=use_augmented)
@@ -19,7 +19,10 @@ def train(batch_size=1, num_epochs=20, lr=0.001, optimizer_name="adam", use_psp=
     print("Torch version:",torch.__version__)
     
     # Our model
-    model = BigDLModel(use_psp).to(device)
+    if use_lstm:
+        model = BigDLModel(use_psp).to(device)
+    else:
+        model = NoLSTMModel(use_lstm).to(device)
     
     # Set loss function and optimizer
     loss_fn = nn.CrossEntropyLoss(ignore_index=255)
@@ -72,7 +75,7 @@ def train(batch_size=1, num_epochs=20, lr=0.001, optimizer_name="adam", use_psp=
         model.eval()
         
         # Run predictions on validation set
-        for data_val in val_loader:
+        for data_val in tqdm(val_loader):
            
             # Get data
             imgSeq, annotatedOutput, imgName = data_val
@@ -127,4 +130,4 @@ def hyperparams_train(optimizer="adam",use_psp=True):
             print("Best model so far:", best_model)
     print("Finished training and best model is",best_model)
 
-# train(num_epochs=100, use_psp=True, batch_size=8, lr=0.01, use_augmented=True)
+# train(num_epochs=100, use_psp=True, batch_size=8, lr=0.001, use_augmented=True)
