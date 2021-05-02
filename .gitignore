@@ -6,3 +6,5 @@ venv/
 data.zip
 Models/
 *.zip
+models_display/
+data_display/
