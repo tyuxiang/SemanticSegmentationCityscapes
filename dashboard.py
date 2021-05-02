@@ -49,16 +49,13 @@ def get_graph_data(model_path):
 
 @st.cache()
 def get_model_list(model_dir):
-    archs = os.listdir(model_dir)
-    all_models = []
-    for arch in archs:
-        eps = [os.path.join(arch, p) for p in os.listdir(os.path.join(model_dir, arch))]
-        all_models += eps
+    all_models = os.listdir(model_dir)
     all_models.sort()
 
     return all_models
 
 display_dir = './data_display'
+model_dir = './models_display'
 all_display_samples = [img.split('_leftImg8bit')[0] for img in os.listdir(os.path.join(display_dir, 'leftImg8bit'))]
 
 
@@ -73,7 +70,7 @@ with select_left:
     "Pick a trained model that we should predict the image with!"
 
     option_empty = st.empty()
-    model_selected = option_empty.selectbox("Select model that you want", get_model_list('./Models'))
+    model_selected = option_empty.selectbox("Select model that you want", get_model_list(model_dir))
 
 with select_right:
     st.header("Image Selection")
@@ -107,7 +104,7 @@ with display_r2[1]:
 
     with st.spinner("prediction happening... please wait"):
         try:
-            model_path = os.path.join('./Models', model_selected)
+            model_path = os.path.join(model_dir, model_selected)
             output, iou_score = predict_image(model_path, image_paths[-1], annotation_image)
             prediction_image.image(output, caption="annotated image from model", use_column_width=True)
             iou_box.success(f'IOU Score is {iou_score}')

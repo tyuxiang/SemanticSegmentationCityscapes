@@ -2,13 +2,17 @@
 Deep Learning Large Project
 
 ## Quick Start
+For the purpose of demonstration, we have provided several trained models and selected samples at this [link for download](). 
+
+The models should be found under `./models_display` and the selected samples are under `./data_display`. 
+
 ```
 streamlit run dashboard.py
 ```
 
 Do make sure that streamlit is downloaded (`pip install streamlit` should typically be sufficient).
 
-## Dataset
+## Dataset for Training
 Note that the dataset file structure should be as follows (for illustration purposes, we only included three cities). 
 ```
 ./data
@@ -24,7 +28,6 @@ Note that the dataset file structure should be as follows (for illustration purp
     ├── lindau
     ├── munster
     └── ulm
-
 ```
 This is important for preversing the training and evaluation process of the model. 
 
