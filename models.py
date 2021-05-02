@@ -124,6 +124,65 @@ class BigDLModel(nn.Module):
         
         return x
         
+class Resnet_FCN(nn.Module):
+    def __init__(self, num_classes=19):
+        # Init from nn.Module
+        super().__init__()
+        self.resnet18 = models.resnet18(pretrained=True)
+#       self.vgg16 = models.vgg16(pretrained=False)
+        self.classifier32 = nn.Sequential(nn.Conv2d(512, 512, 1),
+                                         nn.Conv2d(512,num_classes, 1))
+        self.classifier16 = nn.Sequential(nn.Conv2d(256, 256, 1),
+                                         nn.Conv2d(256,num_classes, 1))
+        self.classifier8 = nn.Sequential(nn.Conv2d(128, 128, 1),
+                                         nn.Conv2d(128,num_classes, 1))
+#         self.deconv = nn.ConvTranspose2d(num_classes*2, num_classes, 32, stride=32)
+        self.deconv32 = nn.ConvTranspose2d(num_classes, num_classes, 4, stride=2, padding=1)
+        self.deconv16 = nn.ConvTranspose2d(num_classes*2, num_classes, 4, stride=2, padding=1)
+        self.deconv8 = nn.ConvTranspose2d(num_classes*2, num_classes, 8, stride=8)      
+
+    def forward(self,x):
+        x1 = x[-1]
+        x1 = self.resnet18.conv1(x1)
+        x1 = self.resnet18.bn1(x1)
+        x1 = self.resnet18.relu(x1)
+        x1 = self.resnet18.maxpool(x1)
+        x1 = self.resnet18.layer1(x1)
+        x1 = self.resnet18.layer2(x1)
+
+        x4_8 = self.classifier8(x1)
+        x4_8 = x4_8
         
+        x1 = self.resnet18.layer3(x1)
+        
+        x4_16 = self.classifier16(x1)
+        x4_16 = x4_16
+        
+        x1 = self.resnet18.layer4(x1)
+        x1 = self.classifier32(x1)
+
+        x = self.deconv32(x1)
+        x = torch.cat([x,x4_16],1)
+        x = self.deconv16(x)
+        x = torch.cat([x,x4_8],1)
+        x = self.deconv8(x)
+
+        return x
+    
+class NoLSTMModel(nn.Module):
+    def __init__(self, use_psp =False,num_classes=19,pool_scales=(1,2,3,6)):
+        super().__init__()
+        self.use_psp = use_psp
+      
+        self.resnet_fcn = Resnet_FCN(num_classes)
+        if use_psp:
+            self.psp = PSP(num_classes,pool_scales)
+            
+    def forward(self,x):
+        x = self.resnet_fcn(x)
+        if self.use_psp:
+            x = self.psp(x)
+        
+        return x
     
         
